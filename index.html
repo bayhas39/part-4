@@ -1231,6 +1231,7 @@ function ChartsPage({sites, incidents, accidents, stats, perSite, attention, pro
   const criticalCount = attention.filter(a=>a.severity==="Critical").length;
   const offlineCamSites = sites.filter(s=>(s.offlineCameras||0)>0).length;
   const offlineAnprSites = sites.filter(s=>(s.offlineANPR||0)>0).length;
+  const offlineAcsSites = sites.filter(s=>(s.notWorkingANPR||0)>0).length;
 
   const byStatus = STATUS.map((st,i)=>({ name:st.value, value:sites.filter(s=>s.status===st.value).length, color:PALETTE[i%PALETTE.length] })).filter(x=>x.value>0);
   const byType = TYPES.map((t,i)=>({ name:t.value, value:sites.filter(s=>s.type===t.value).length, color:PALETTE[i%PALETTE.length] })).filter(x=>x.value>0);
@@ -1264,7 +1265,9 @@ function ChartsPage({sites, incidents, accidents, stats, perSite, attention, pro
         <button onClick={()=>setPage("attention")} className="text-left">
           <KPI label="Sites with Offline ANPR" value={offlineAnprSites} sub={`${stats.offlineANPR} offline ANPR • Tap to see sites + problems`} icon={IcWifiOff} color="bg-amber-500 text-white" top="bg-amber-500"/>
         </button>
-        <KPI label="Completion Rate" value={`${completion}%`} sub={`${stats.completed} of ${stats.total} completed`} icon={IcTrend} color="bg-emerald-500 text-white"/>
+        <button onClick={()=>setPage("attention")} className="text-left">
+          <KPI label="Total Sites with Offline Access Control" value={offlineAcsSites} sub={`${stats.nwACS} not-working ACS • Tap to see sites + problems`} icon={IcLock} color="bg-emerald-500 text-white" top="bg-emerald-500"/>
+        </button>
       </div>
 
       <Card title="Problems by Category" subtitle={`${totalProblems} total • Top: ${topProblem? topProblem.name : "—"} (${topProblem? topProblem.value : 0})`} icon={IcAlert}>

@@ -1229,6 +1229,20 @@ function ChartsPage({sites, incidents, accidents, stats, perSite, attention, pro
         </button>
       </div>
 
+      <Card title="Top 10 Sites — Highest Offline Cameras" subtitle="Sites with the most offline CCTV cameras" icon={IcCamOff}>
+        <ResponsiveContainer width="100%" height={280}>
+          <BarChart data={topOfflineCamSites} margin={{top:8,right:12,left:0,bottom:60}}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0"/>
+            <XAxis dataKey="shortName" angle={-30} textAnchor="end" height={70} tick={{fontSize:9}} interval={0}/>
+            <YAxis tick={{fontSize:11}} allowDecimals={false}/>
+            <Tooltip/>
+            <Bar dataKey="offlineCameras" name="Offline CCTV" radius={[8,8,0,0]} barSize={16} fill="#ef4444">
+              {topOfflineCamSites.map((x,i)=><Cell key={i} fill={PALETTE[i%PALETTE.length]}/>)}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </Card>
+
       <Card title="Problems by Category" subtitle={`${totalProblems} total • Top: ${topProblem? topProblem.name : "—"} (${topProblem? topProblem.value : 0})`} icon={IcAlert}>
         <ResponsiveContainer width="100%" height={260}>
           <BarChart data={probData} layout="vertical" margin={{top:0,right:24,left:10,bottom:0}}>
@@ -1310,19 +1324,6 @@ function ChartsPage({sites, incidents, accidents, stats, perSite, attention, pro
             <Bar dataKey="notWorkingANPR" name="Not Working ACS" stackId="a" fill="#7c3aed"/>
             <Bar dataKey="notWorkingGate" name="Gate barrier" stackId="a" fill="#0ea5e9"/>
             <Bar dataKey="notWorkingIntercom" name="Intercom" stackId="a" fill="#1e293b"/>
-          </BarChart>
-        </ResponsiveContainer>
-      </Card>
-      <Card title="Top 10 Sites — Highest Offline Cameras" subtitle="Sites with the most offline CCTV cameras" icon={IcCamOff}>
-        <ResponsiveContainer width="100%" height={280}>
-          <BarChart data={topOfflineCamSites} layout="vertical" margin={{top:0,right:24,left:10,bottom:0}}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0"/>
-            <XAxis type="number" allowDecimals={false} tick={{fontSize:11}}/>
-            <YAxis type="category" dataKey="shortName" width={150} tick={{fontSize:11}}/>
-            <Tooltip/>
-            <Bar dataKey="offlineCameras" name="Offline CCTV" radius={[0,8,8,0]} barSize={16} fill="#ef4444">
-              {topOfflineCamSites.map((x,i)=><Cell key={i} fill={PALETTE[i%PALETTE.length]}/>)}
-            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </Card>

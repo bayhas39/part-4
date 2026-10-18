@@ -1230,6 +1230,7 @@ function ChartsPage({sites, incidents, accidents, stats, perSite, attention, pro
   const completion = stats.total ? Math.round((stats.completed/stats.total)*100) : 0;
   const criticalCount = attention.filter(a=>a.severity==="Critical").length;
   const offlineCamSites = sites.filter(s=>(s.offlineCameras||0)>0).length;
+  const offlineAnprSites = sites.filter(s=>(s.offlineANPR||0)>0).length;
 
   const byStatus = STATUS.map((st,i)=>({ name:st.value, value:sites.filter(s=>s.status===st.value).length, color:PALETTE[i%PALETTE.length] })).filter(x=>x.value>0);
   const byType = TYPES.map((t,i)=>({ name:t.value, value:sites.filter(s=>s.type===t.value).length, color:PALETTE[i%PALETTE.length] })).filter(x=>x.value>0);
@@ -1260,7 +1261,9 @@ function ChartsPage({sites, incidents, accidents, stats, perSite, attention, pro
         <button onClick={()=>setPage("attention")} className="text-left">
           <KPI label="Total Sites with Offline Camera" value={offlineCamSites} sub={`${stats.offlineCameras} offline cameras • Tap to see sites + problems`} icon={IcAlert} color="bg-red-600 text-white" top="bg-red-500"/>
         </button>
-        <KPI label="Total Problems" value={totalProblems} icon={IcAlert} color="bg-amber-500 text-white" top="bg-amber-500"/>
+        <button onClick={()=>setPage("attention")} className="text-left">
+          <KPI label="Sites with Offline ANPR" value={offlineAnprSites} sub={`${stats.offlineANPR} offline ANPR • Tap to see sites + problems`} icon={IcWifiOff} color="bg-amber-500 text-white" top="bg-amber-500"/>
+        </button>
         <KPI label="Completion Rate" value={`${completion}%`} sub={`${stats.completed} of ${stats.total} completed`} icon={IcTrend} color="bg-emerald-500 text-white"/>
       </div>
 

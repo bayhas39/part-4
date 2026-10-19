@@ -917,7 +917,7 @@ function SitesPage({sites, setSites, incidents, setIncidents, stats, setPage}){
       </div>
 
       {editSite!==null && <SiteFormModal site={editSite} sites={sites} setSites={setSites} onClose={()=>setEditSite(null)}/>}
-      {viewSite && <SiteDetailModal site={viewSite} incidents={incidents} setPage={setPage} onClose={()=>setViewSite(null)}/>}
+      {viewSite && <SiteDetailModal site={viewSite} incidents={incidents} accidents={accidents} setPage={setPage} onClose={()=>setViewSite(null)}/>}
       {reportFor && <IncidentFormModal sites={sites} incidents={incidents} setIncidents={setIncidents} preSite={reportFor} onClose={()=>setReportFor(null)}/>}
       {pinOpen && <PincodeAccessModal sites={sites} onClose={()=>setPinOpen(false)}/>}
     </div>
@@ -961,9 +961,10 @@ function SiteCard({site, onOpen, onEdit, onDelete, onReport}){
 }
 
 /* ------------- site details modal ------------- */
-function SiteDetailModal({site, incidents, setPage, onClose}){
+function SiteDetailModal({site, incidents, accidents, setPage, onClose}){
   const problems = problemsOf(site, incidents);
   const siteIncidents = incidents.filter(i=>i.siteId===site.id || i.siteName===site.name);
+  const siteAccidents = (accidents||[]).filter(a=>a.siteId===site.id || a.siteName===site.name);
   const uptime = uptimeOf(site);
   const camData = [{name:"Cameras", online:site.totalCameras-(site.offlineCameras||0), offline:site.offlineCameras||0}];
   return (
@@ -1025,7 +1026,7 @@ function SiteDetailModal({site, incidents, setPage, onClose}){
 
         <div>
           <h4 className="text-sm font-extrabold mb-2">Issues for this site • {problems.length} problems</h4>
-          <p className="text-[11px] text-slate-400 mb-2">{siteIncidents.length} incidents • 0 accidents</p>
+          <p className="text-[11px] text-slate-400 mb-2">{siteIncidents.length} incidents • {siteAccidents.length} accidents</p>
           {problems.length===0 ? <p className="text-sm text-slate-500 bg-emerald-50 border border-emerald-100 rounded-xl p-3">No problems — all systems online for this site.</p> : (
             <div className="flex flex-wrap gap-2">{problems.map(p=> <span key={p} className="text-xs font-semibold px-2.5 py-1.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">{p}</span>)}</div>
           )}
@@ -1054,8 +1055,20 @@ function SiteDetailModal({site, incidents, setPage, onClose}){
         </div>
 
         <div>
-          <h4 className="text-sm font-extrabold mb-2">Accidents (0)</h4>
-          <p className="text-xs text-slate-500 text-center py-4">No accidents for this site.</p>
+          <h4 className="text-sm font-extrabold mb-2">Accidents ({siteAccidents.length})</h4>
+          {siteAccidents.length===0 ? <p className="text-xs text-slate-500 text-center py-4">No accidents for this site.</p> : (
+            <div className="space-y-2">
+              {siteAccidents.map(a=>(
+                <div key={a.id} className="border rounded-xl p-3 bg-slate-50" style={{borderColor:"#eef2f7"}}>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-semibold text-sm">{a.title||a.type||"Accident"}</span>
+                    <span className="ml-auto text-[11px] text-slate-400">{a.status} • {a.date}</span>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-1">{a.description}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </Modal>

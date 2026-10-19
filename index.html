@@ -1203,6 +1203,8 @@ function ChartsPage({sites, incidents, accidents, stats, perSite, attention, pro
     (a.offlineCameras+a.offlineANPR+a.notWorkingANPR+a.notWorkingGate+a.notWorkingIntercom)).slice(0,10);
   const topOfflineCamSites = [...perSite].filter(s=>(s.offlineCameras||0)>0).sort((a,b)=>(b.offlineCameras||0)-(a.offlineCameras||0)).slice(0,10);
   const topOfflineAnprSites = [...perSite].filter(s=>(s.offlineANPR||0)>0).sort((a,b)=>(b.offlineANPR||0)-(a.offlineANPR||0)).slice(0,10);
+  const top5AnprSites = [...perSite].filter(s=>(s.offlineANPR||0)>0).sort((a,b)=>(b.offlineANPR||0)-(a.offlineANPR||0)).slice(0,5);
+  const top5GateSites = [...perSite].filter(s=>(s.notWorkingGate||0)>0).sort((a,b)=>(b.notWorkingGate||0)-(a.notWorkingGate||0)).slice(0,5);
 
   return (
     <div className="space-y-4">
@@ -1255,6 +1257,35 @@ function ChartsPage({sites, incidents, accidents, stats, perSite, attention, pro
           </BarChart>
         </ResponsiveContainer>
       </Card>
+
+      <div className="grid lg:grid-cols-2 gap-4">
+        <Card title="Top 5 Sites — Highest Offline ANPR" subtitle="Sites with the most offline ANPR cameras" icon={IcWifiOff}>
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={top5AnprSites} layout="vertical" margin={{top:0,right:12,left:30,bottom:0}}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0"/>
+              <XAxis type="number" allowDecimals={false} tick={{fontSize:11}}/>
+              <YAxis type="category" dataKey="shortName" width={150} tick={{fontSize:11}}/>
+              <Tooltip/>
+              <Bar dataKey="offlineANPR" name="Offline ANPR" radius={[0,8,8,0]} barSize={14} fill="#ef4444">
+                {top5AnprSites.map((x,i)=><Cell key={i} fill={PALETTE[i%PALETTE.length]}/>)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
+        <Card title="Top 5 Sites — Highest Offline Gate Barrier" subtitle="Sites with the most offline gate barriers" icon={IcLock}>
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={top5GateSites} layout="vertical" margin={{top:0,right:12,left:30,bottom:0}}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0"/>
+              <XAxis type="number" allowDecimals={false} tick={{fontSize:11}}/>
+              <YAxis type="category" dataKey="shortName" width={150} tick={{fontSize:11}}/>
+              <Tooltip/>
+              <Bar dataKey="notWorkingGate" name="Gate barrier" radius={[0,8,8,0]} barSize={14} fill="#0ea5e9">
+                {top5GateSites.map((x,i)=><Cell key={i} fill={PALETTE[i%PALETTE.length]}/>)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
+      </div>
 
       <Card title="Problems by Category" subtitle={`${totalProblems} total • Top: ${topProblem? topProblem.name : "—"} (${topProblem? topProblem.value : 0})`} icon={IcAlert}>
         <ResponsiveContainer width="100%" height={260}>
